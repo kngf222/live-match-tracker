@@ -1,2 +1,2 @@
 # live-match-tracker
-track live score of tennis and pickleball matches
+track live scores of tennis and pickleball matches
