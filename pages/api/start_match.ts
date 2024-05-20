@@ -12,18 +12,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         data: {
           player1,
           player2,
-          score1: 0, // Initialize score1 to 0
-          score2: 0, // Initialize score2 to 0
+          score1: 0,
+          score2: 0,
         },
       });
 
-      const socketServer = (res.socket as any).server;
-      if (socketServer && socketServer.io) {
-        socketServer.io.emit("match-started", match);
-      }
-
-      res.status(200).json({ matchId: match.id, message: 'Match started successfully' });
+      res.status(200).json(match);
     } catch (error) {
+      console.error('Failed to start match', error);
       res.status(500).json({ error: 'Failed to start match' });
     }
   } else {

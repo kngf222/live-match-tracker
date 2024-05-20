@@ -10,14 +10,14 @@ interface Match {
   score2: number;
 }
 
-export default function Match() {
+export default function MatchPage() {
+  const [match, setMatch] = useState<Match | null>(null);
   const router = useRouter();
   const { matchId } = router.query;
-  const [match, setMatch] = useState(null);
 
   useEffect(() => {
     if (matchId) {
-      axios.get(`/api/match/${matchId}`)
+      axios.get(`/api/get_match/${matchId}`)
         .then(response => {
           setMatch(response.data);
         })
@@ -27,18 +27,28 @@ export default function Match() {
     }
   }, [matchId]);
 
+  const updateScore = async (player: 'player1' | 'player2', newScore: number) => {
+    try {
+      await axios.post('/api/update_score', { player, newScore, matchId });
+      setMatch(prevMatch => prevMatch ? { ...prevMatch, [player === 'player1' ? 'score1' : 'score2']: newScore } : null);
+    } catch (error) {
+      console.error('Failed to update score', error);
+    }
+  };
+
   if (!match) {
     return <div>Loading...</div>;
   }
 
   return (
     <div>
-      <h1>Match {matchId}</h1>
+      <h1>Match between {match.player1} and {match.player2}</h1>
+      <h2>Score</h2>
       <div>
-        <h2>{match.player1}: {match.score1}</h2>
+        {match.player1}: {match.score1} <button onClick={() => updateScore('player1', match.score1 + 1)}>+</button> <button onClick={() => updateScore('player1', match.score1 - 1)}>-</button>
       </div>
       <div>
-        <h2>{match.player2}: {match.score2}</h2>
+        {match.player2}: {match.score2} <button onClick={() => updateScore('player2', match.score2 + 1)}>+</button> <button onClick={() => updateScore('player2', match.score2 - 1)}>-</button>
       </div>
     </div>
   );
