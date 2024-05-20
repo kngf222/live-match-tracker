@@ -1,49 +1,60 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-export default function Home() {
+const Home = () => {
   const [player1, setPlayer1] = useState('');
   const [player2, setPlayer2] = useState('');
-  const [score1, setScore1] = useState(0);
-  const [score2, setScore2] = useState(0);
+  const [message, setMessage] = useState('');
+  const [matchId, setMatchId] = useState<string | null>(null);
 
   const startMatch = async () => {
-    await axios.post('/api/start_match', { player1, player2 });
-    setScore1(0);
-    setScore2(0);
+    try {
+      const response = await axios.post('/api/start_match', { player1, player2 });
+      setMatchId(response.data.id);  // Store the match ID for later use
+      setMessage('Match started successfully');
+    } catch (error) {
+      setMessage('Failed to start match');
+    }
   };
 
-  const updateScore = async (player: number) => {
-    const response = await axios.post('/api/score_update', { player });
-    setScore1(response.data.score1);
-    setScore2(response.data.score2);
+  const updateScore = async (player: 'player1' | 'player2', newScore: number) => {
+    try {
+      await axios.post('/api/update_score', { player, newScore, player1, player2 });
+      setMessage('Score updated successfully');
+    } catch (error) {
+      setMessage('Failed to update score');
+    }
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold">Live Score Tracker</h1>
-      <div className="my-4">
-        <input
-          type="text"
-          className="border p-2 mr-2"
-          placeholder="Player 1 Name"
-          value={player1}
-          onChange={(e) => setPlayer1(e.target.value)}
-        />
-        <input
-          type="text"
-          className="border p-2 mr-2"
-          placeholder="Player 2 Name"
-          value={player2}
-          onChange={(e) => setPlayer2(e.target.value)}
-        />
-        <button className="bg-blue-500 text-white p-2" onClick={startMatch}>Start Match</button>
-      </div>
-      <h2 className="text-2xl my-4">Score: {score1} - {score2}</h2>
-      <div>
-        <button className="bg-green-500 text-white p-2 mr-2" onClick={() => updateScore(1)}>Player 1 Scores</button>
-        <button className="bg-red-500 text-white p-2" onClick={() => updateScore(2)}>Player 2 Scores</button>
-      </div>
+    <div className="container">
+      <h1>Welcome to Live Score Tracker</h1>
+      <input
+        type="text"
+        placeholder="Player 1"
+        value={player1}
+        onChange={(e) => setPlayer1(e.target.value)}
+      />
+      <input
+        type="text"
+        placeholder="Player 2"
+        value={player2}
+        onChange={(e) => setPlayer2(e.target.value)}
+      />
+      <button onClick={startMatch}>Start Match</button>
+      <p>{message}</p>
+
+      {matchId && (
+        <div>
+          <h2>Match ID: {matchId}</h2>
+          <button onClick={() => updateScore('player1', 1)}>Player 1 +</button>
+          <button onClick={() => updateScore('player1', -1)}>Player 1 -</button>
+          <button onClick={() => updateScore('player2', 1)}>Player 2 +</button>
+          <button onClick={() => updateScore('player2', -1)}>Player 2 -</button>
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default Home;
