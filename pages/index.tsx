@@ -17,7 +17,7 @@ const Home = () => {
       setMatchId(response.data.matchId);  // Ensure this is correctly mapped
       setScore1(0);
       setScore2(0);
-      console.log(response.data.matchid);  // Add this line
+      console.log(response.data.matchId);  // Add this line
       setMatchUrl(`${window.location.origin}/match/${response.data.matchId}`);  // Construct match URL
       console.log('Match started:', response.data);
     } catch (error) {
