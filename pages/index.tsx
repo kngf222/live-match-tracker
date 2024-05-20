@@ -6,25 +6,34 @@ const Home = () => {
   const [player2, setPlayer2] = useState('');
   const [score1, setScore1] = useState(0);
   const [score2, setScore2] = useState(0);
+  const [matchId, setMatchId] = useState<number | null>(null);  // Track the match ID
 
   const startMatch = async () => {
     try {
-      await axios.post('/api/start_match', { player1, player2 });
+      const response = await axios.post('/api/start_match', { player1, player2 });
+      setMatchId(response.data.id);  // Save the match ID from the response
       setScore1(0);
       setScore2(0);
+      console.log('Match started:', response.data);
     } catch (error) {
       console.error('Failed to start match:', error);
     }
   };
 
   const updateScore = async (player: string, newScore: number) => {
+    if (!matchId) {
+      console.error('No matchId available');
+      return;
+    }
+
     try {
-      await axios.post('/api/update_score', { player, newScore });
+      await axios.post('/api/update_score', { player, newScore, matchId });
       if (player === 'player1') {
         setScore1(newScore);
       } else {
         setScore2(newScore);
       }
+      console.log('Score updated for matchId:', matchId);
     } catch (error) {
       console.error('Failed to update score:', error);
     }
