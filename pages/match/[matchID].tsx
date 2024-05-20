@@ -12,23 +12,31 @@ interface Match {
 
 export default function MatchPage() {
   const [match, setMatch] = useState<Match | null>(null);
+  const [matchId, setMatchId] = useState<number | null>(null);
   const router = useRouter();
-  const { matchId } = router.query;
+  const { id } = router.query;
 
   useEffect(() => {
-    if (matchId) {
-      axios.get(`/api/get_match/${matchId}`)
+    if (id) {
+      axios.get(`/api/get_match/${id}`)
         .then(response => {
           setMatch(response.data);
+          setMatchId(response.data.id);  // Set matchId
         })
         .catch(error => {
           console.error('Failed to fetch match', error);
         });
     }
-  }, [matchId]);
+  }, [id]);
 
   const updateScore = async (player: 'player1' | 'player2', newScore: number) => {
+    if (!matchId) {
+      console.error('matchId is not set');
+      return;
+    }
+
     try {
+      console.log('Updating score for matchId:', matchId, 'player:', player, 'newScore:', newScore);
       await axios.post('/api/update_score', { player, newScore, matchId });
       setMatch(prevMatch => prevMatch ? { ...prevMatch, [player === 'player1' ? 'score1' : 'score2']: newScore } : null);
     } catch (error) {

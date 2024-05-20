@@ -17,10 +17,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
+      console.log('Match created:', match);
       res.status(200).json({ matchId: match.id });
     } catch (error) {
-      console.error('Failed to start match', error);
-      res.status(500).json({ error: 'Failed to start match' });
+      console.error('Failed to create match', error);
+      res.status(500).json({ error: 'Failed to create match' });
     }
   } else {
     res.status(405).json({ error: 'Method not allowed' });

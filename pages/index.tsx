@@ -6,10 +6,12 @@ const Home = () => {
   const [player2, setPlayer2] = useState('');
   const [score1, setScore1] = useState(0);
   const [score2, setScore2] = useState(0);
+  const [matchId, setMatchId] = useState<number | null>(null);
 
   const startMatch = async () => {
     try {
-      await axios.post('/api/start_match', { player1, player2 });
+      const response = await axios.post('/api/start_match', { player1, player2 });
+      setMatchId(response.data.matchId);  // Set matchId from response
       // Reset scores when starting a new match
       setScore1(0);
       setScore2(0);
@@ -19,8 +21,13 @@ const Home = () => {
   };
 
   const updateScore = async (player: string, newScore: number) => {
+    if (!matchId) {
+      console.error('No matchId available');
+      return;
+    }
+
     try {
-      await axios.post('/api/update_score', { player, newScore });
+      await axios.post('/api/update_score', { player, newScore, matchId });
       if (player === 'player1') {
         setScore1(newScore);
       } else {
