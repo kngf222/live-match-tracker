@@ -11,6 +11,7 @@ const Home = () => {
   const startMatch = async () => {
     try {
       const response = await axios.post('/api/start_match', { player1, player2 });
+      console.log('Response from start_match:', response.data);  // Add this line
       setMatchId(response.data.matchId);  // Ensure this is correctly mapped
       setScore1(0);
       setScore2(0);
@@ -20,12 +21,14 @@ const Home = () => {
     }
   };
 
-  const updateScore = async (player: string, newScore: number) => {
+  const updateScore = async (player: string, newScore: number) => { 
+    console.log('Current matchId:', matchId);  // Add this line
+  
     if (!matchId) {
       console.error('No matchId available');
       return;
     }
-
+  
     console.log('Updating score:', { player, newScore, matchId });
 
     try {
