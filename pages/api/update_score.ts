@@ -7,6 +7,10 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     const { player, newScore, matchId } = req.body;
 
+    if (!matchId) {
+      return res.status(400).json({ error: 'matchId is required' });
+    }
+
     try {
       const match = await prisma.match.findUnique({
         where: { id: matchId },

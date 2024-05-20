@@ -17,7 +17,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         },
       });
 
-      res.status(200).json(match);
+      res.status(200).json({ matchId: match.id });
     } catch (error) {
       console.error('Failed to start match', error);
       res.status(500).json({ error: 'Failed to start match' });
