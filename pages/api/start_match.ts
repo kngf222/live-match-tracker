@@ -22,7 +22,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         socketServer.io.emit("match-started", match);
       }
 
-      res.status(200).json({ id: match.id, message: 'Match started successfully' });
+      res.status(200).json({ matchId: match.id, message: 'Match started successfully' });
     } catch (error) {
       res.status(500).json({ error: 'Failed to start match' });
     }

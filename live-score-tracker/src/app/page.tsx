@@ -1,60 +1,59 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-const Home = () => {
+export default function Home() {
   const [player1, setPlayer1] = useState('');
   const [player2, setPlayer2] = useState('');
-  const [message, setMessage] = useState('');
-  const [matchId, setMatchId] = useState<string | null>(null);
+  const [matchId, setMatchId] = useState(null);
+  const [score1, setScore1] = useState(0);
+  const [score2, setScore2] = useState(0);
 
   const startMatch = async () => {
     try {
       const response = await axios.post('/api/start_match', { player1, player2 });
-      setMatchId(response.data.id);  // Store the match ID for later use
-      setMessage('Match started successfully');
+      setMatchId(response.data.matchId);
     } catch (error) {
-      setMessage('Failed to start match');
+      console.error('Failed to start match', error);
     }
   };
 
-  const updateScore = async (player: 'player1' | 'player2', newScore: number) => {
+  const updateScore = async (player: string, newScore: number) => {
     try {
-      await axios.post('/api/update_score', { player, newScore, player1, player2 });
-      setMessage('Score updated successfully');
+      await axios.post('/api/update_score', { matchId, player, newScore });
+      if (player === 'player1') {
+        setScore1(newScore);
+      } else {
+        setScore2(newScore);
+      }
     } catch (error) {
-      setMessage('Failed to update score');
+      console.error('Failed to update score', error);
     }
   };
+
+  if (matchId) {
+    return (
+      <div>
+        <h1>Match {matchId}</h1>
+        <div>
+          <h2>{player1}: {score1}</h2>
+          <button onClick={() => updateScore('player1', score1 + 1)}>+</button>
+          <button onClick={() => updateScore('player1', score1 - 1)}>-</button>
+        </div>
+        <div>
+          <h2>{player2}: {score2}</h2>
+          <button onClick={() => updateScore('player2', score2 + 1)}>+</button>
+          <button onClick={() => updateScore('player2', score2 - 1)}>-</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="container">
+    <div>
       <h1>Welcome to Live Score Tracker</h1>
-      <input
-        type="text"
-        placeholder="Player 1"
-        value={player1}
-        onChange={(e) => setPlayer1(e.target.value)}
-      />
-      <input
-        type="text"
-        placeholder="Player 2"
-        value={player2}
-        onChange={(e) => setPlayer2(e.target.value)}
-      />
+      <input type="text" value={player1} onChange={(e) => setPlayer1(e.target.value)} placeholder="Player 1" />
+      <input type="text" value={player2} onChange={(e) => setPlayer2(e.target.value)} placeholder="Player 2" />
       <button onClick={startMatch}>Start Match</button>
-      <p>{message}</p>
-
-      {matchId && (
-        <div>
-          <h2>Match ID: {matchId}</h2>
-          <button onClick={() => updateScore('player1', 1)}>Player 1 +</button>
-          <button onClick={() => updateScore('player1', -1)}>Player 1 -</button>
-          <button onClick={() => updateScore('player2', 1)}>Player 2 +</button>
-          <button onClick={() => updateScore('player2', -1)}>Player 2 -</button>
-        </div>
-      )}
     </div>
   );
-};
-
-export default Home;
+}
