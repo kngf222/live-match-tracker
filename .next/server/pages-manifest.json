@@ -2,7 +2,5 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/": "pages/index.js",
-  "/api/start_match": "pages/api/start_match.js",
-  "/api/update_score": "pages/api/update_score.js"
+  "/": "pages/index.js"
 }
