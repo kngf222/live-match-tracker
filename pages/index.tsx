@@ -6,7 +6,7 @@ const Home = () => {
   const [player2, setPlayer2] = useState('');
   const [score1, setScore1] = useState(0);
   const [score2, setScore2] = useState(0);
-  const [matchId, setMatchId] = useState<number | null>(null);  // Track the match ID
+  const [matchId, setMatchId] = useState<number | null>(null); // Track the match ID
 
   const startMatch = async () => {
     try {
@@ -14,26 +14,28 @@ const Home = () => {
       setMatchId(response.data.id);  // Save the match ID from the response
       setScore1(0);
       setScore2(0);
-      console.log('Match started:', response.data);
+      console.log('Match started:', response.data); // Debugging log
     } catch (error) {
       console.error('Failed to start match:', error);
     }
   };
 
   const updateScore = async (player: string, newScore: number) => {
-    if (!matchId) {
-      console.error('No matchId available');
+    if (matchId === null) {
+      console.error('No matchId available'); // Debugging log
       return;
     }
 
+    console.log('Updating score:', { player, newScore, matchId }); // Debugging log
+
     try {
-      await axios.post('/api/update_score', { player, newScore, matchId });
+      await axios.post('/api/update_score', { player, newScore, matchId });  // Include matchId in the request
       if (player === 'player1') {
         setScore1(newScore);
       } else {
         setScore2(newScore);
       }
-      console.log('Score updated for matchId:', matchId);
+      console.log('Score updated for matchId:', matchId); // Debugging log
     } catch (error) {
       console.error('Failed to update score:', error);
     }
