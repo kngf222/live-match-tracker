@@ -24,30 +24,36 @@ export default function MatchPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!router.isReady) {
-      console.log('Router is not ready');
-      return;
-    }
+    const fetchMatchData = async () => {
+      if (!router.isReady) {
+        console.log('Router is not ready');
+        return;
+      }
 
-    const { matchId } = router.query;
-    console.log('Router is ready');
-    console.log('router query matchId:', matchId);
+      const { matchId } = router.query;
+      console.log('Router is ready');
+      console.log('router query matchId:', matchId);
 
-    if (matchId) {
-      console.log(`Fetching match data for matchId: ${matchId}`);
-      axios.get(`/api/get_match/${matchId}`)
-        .then(response => {
+      if (matchId) {
+        console.log(`Fetching match data for matchId: ${matchId}`);
+        try {
+          console.log('Sending request to /api/get_match');
+          console.log('matchId:', matchId);
+          console.log(`/api/get_match/${matchId}`);
+          const response = await axios.get(`/api/get_match/${matchId}`);
           console.log('Match data received:', response.data);
           setMatch(response.data);
-          setLoading(false);
-        })
-        .catch(error => {
+        } catch (error) {
           console.error('Failed to fetch match:', error);
+        } finally {
           setLoading(false);
-        });
-    } else {
-      console.log('matchId is undefined');
-    }
+        }
+      } else {
+        console.log('matchId is undefined');
+      }
+    };
+
+    fetchMatchData();
   }, [router.isReady, router.query]);
 
   if (loading) {
