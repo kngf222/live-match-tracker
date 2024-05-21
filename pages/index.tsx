@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
+import Button from './components/Button';
 
 const Home = () => {
   const [player1, setPlayer1] = useState('');
@@ -66,7 +67,7 @@ const Home = () => {
             onChange={(e) => setPlayer2(e.target.value)}
             className="input input-bordered input-secondary mb-4"
           />
-          <button onClick={startMatch} className="btn btn-primary">Start Match</button>
+          <Button onClick={startMatch}>Start Match</Button>
         </div>
         {matchUrl && (
           <div className="mb-4 text-center">
@@ -79,17 +80,17 @@ const Home = () => {
             <div className="text-center">
               <h3 className="text-xl font-semibold mb-2 text-red-600">{player1}</h3>
               <div className="flex items-center justify-center space-x-2">
-                <button onClick={() => updateScore('player1', score1 + 1)} className="btn btn-success">+</button>
+                <Button onClick={() => updateScore('player1', score1 + 1)} color="success">+</Button>
                 <span className="text-2xl">{score1}</span>
-                <button onClick={() => updateScore('player1', score1 - 1)} className="btn btn-error">-</button>
+                <Button onClick={() => updateScore('player1', score1 - 1)} color="error">-</Button>
               </div>
             </div>
             <div className="text-center">
               <h3 className="text-xl font-semibold mb-2 text-red-600">{player2}</h3>
               <div className="flex items-center justify-center space-x-2">
-                <button onClick={() => updateScore('player2', score2 + 1)} className="btn btn-success">+</button>
+                <Button onClick={() => updateScore('player2', score2 + 1)} color="success">+</Button>
                 <span className="text-2xl">{score2}</span>
-                <button onClick={() => updateScore('player2', score2 - 1)} className="btn btn-error">-</button>
+                <Button onClick={() => updateScore('player2', score2 - 1)} color="error">-</Button>
               </div>
             </div>
           </div>
