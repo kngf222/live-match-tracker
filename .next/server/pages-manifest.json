@@ -2,7 +2,5 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/match/[matchID]": "pages/match/[matchID].js",
-  "/": "pages/index.js",
-  "/api/get_match/[matchID]": "pages/api/get_match/[matchID].js"
+  "/": "pages/index.js"
 }
