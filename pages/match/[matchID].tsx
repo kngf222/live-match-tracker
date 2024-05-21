@@ -22,9 +22,17 @@ export default function MatchPage() {
   const [match, setMatch] = useState<Match | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const { matchId } = router.query;
 
   useEffect(() => {
+    if (!router.isReady) {
+      console.log('Router is not ready');
+      return;
+    }
+
+    const { matchId } = router.query;
+    console.log('Router is ready');
+    console.log('router query matchId:', matchId);
+
     if (matchId) {
       console.log(`Fetching match data for matchId: ${matchId}`);
       axios.get(`/api/get_match/${matchId}`)
@@ -37,21 +45,10 @@ export default function MatchPage() {
           console.error('Failed to fetch match:', error);
           setLoading(false);
         });
+    } else {
+      console.log('matchId is undefined');
     }
-  }, [matchId]);
-
-  const updateScore = async (player: 'player1' | 'player2', newScore: number) => {
-    try {
-      if (!matchId) {
-        console.error('No matchId available');
-        return;
-      }
-      await axios.post('/api/update_score', { player, newScore, matchId });
-      setMatch(prevMatch => prevMatch ? { ...prevMatch, [player === 'player1' ? 'score1' : 'score2']: newScore } : null);
-    } catch (error) {
-      console.error('Failed to update score', error);
-    }
-  };
+  }, [router.isReady, router.query]);
 
   if (loading) {
     return <div className="text-center mt-10">Loading...</div>;
@@ -69,17 +66,13 @@ export default function MatchPage() {
         <div className="text-center">
           <h3 className="text-xl font-semibold mb-2">{match.player1}</h3>
           <div className="flex items-center justify-center space-x-2">
-            <button className="btn btn-secondary" onClick={() => updateScore('player1', match.score1 + 1)}>+</button>
             <span className="text-2xl">{match.score1}</span>
-            <button className="btn btn-secondary" onClick={() => updateScore('player1', match.score1 - 1)}>-</button>
           </div>
         </div>
         <div className="text-center">
           <h3 className="text-xl font-semibold mb-2">{match.player2}</h3>
           <div className="flex items-center justify-center space-x-2">
-            <button className="btn btn-secondary" onClick={() => updateScore('player2', match.score2 + 1)}>+</button>
             <span className="text-2xl">{match.score2}</span>
-            <button className="btn btn-secondary" onClick={() => updateScore('player2', match.score2 - 1)}>-</button>
           </div>
         </div>
       </div>

@@ -4,16 +4,18 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  console.log('API endpoint hit');
   const { matchId } = req.query;
+  console.log('matchId:', matchId);
+
+  if (!matchId) {
+    console.error('No matchId provided in the request');
+    return res.status(400).json({ error: 'matchId is required' });
+  }
 
   console.log(`Fetching match data for matchId: ${matchId}`);
 
   try {
-    if (!matchId) {
-      console.error('No matchId provided in the request');
-      return res.status(400).json({ error: 'matchId is required' });
-    }
-
     const match = await prisma.match.findUnique({
       where: { id: parseInt(matchId as string, 10) },
       include: { histories: true },
