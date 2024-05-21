@@ -1,7 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import "daisyui";
+@import "daisyui/dist/full.css";
+
+
 
 :root {
   --foreground-rgb: 0, 0, 0;
